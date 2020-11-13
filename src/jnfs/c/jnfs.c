@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <nfsc/libnfs.h>
@@ -559,6 +560,13 @@ Java_io_kuun_jnfs_NativeNfsContext_rename(JNIEnv *env, jclass clazz, jlong conte
     (*env)->ReleaseStringUTFChars(env, newpath, cnewpath);
     
     return ret;
+}
+
+JNIEXPORT jstring JNICALL 
+Java_io_kuun_jnfs_NativeNfsContext_strerror(JNIEnv *env, jclass clazz, jint errno) {
+    char *msg = strerror(errno);
+
+    return (*env)->NewStringUTF(env, msg);
 }
 
 static void convert_nfs_stat64(JNIEnv *env, const struct nfs_stat_64 *stat, jobject fileStat) {

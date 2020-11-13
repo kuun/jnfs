@@ -95,7 +95,9 @@ class NativeNfsContext {
 
     static native int fchown(long contextPtr, long filePtr, int uid, int gid);
 
-    static native int utime(long contextPtr, String path, long actime, long modtime);
+    static native int utime(long contextPtr, String path, long sec, long nsec);
 
     static native int rename(long contextPtr, String oldPath, String newPath);
+
+    static native String strerror(int errno);
 }

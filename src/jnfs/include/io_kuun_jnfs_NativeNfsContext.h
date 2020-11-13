@@ -399,6 +399,14 @@ JNIEXPORT jint JNICALL Java_io_kuun_jnfs_NativeNfsContext_utime
 JNIEXPORT jint JNICALL Java_io_kuun_jnfs_NativeNfsContext_rename
   (JNIEnv *, jclass, jlong, jstring, jstring);
 
+/*
+ * Class:     io_kuun_jnfs_NativeNfsContext
+ * Method:    strerror
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_io_kuun_jnfs_NativeNfsContext_strerror
+  (JNIEnv *, jclass, jint);
+
 #ifdef __cplusplus
 }
 #endif
