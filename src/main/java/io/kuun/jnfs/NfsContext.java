@@ -9,7 +9,7 @@ public class NfsContext implements Closeable {
     long contextPtr;
 
     static {
-        System.loadLibrary("jnfs");
+        Utils.loadAllEmbeddedLibraries();
     }
 
     public NfsContext() {
