@@ -14,10 +14,12 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.1'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.1'
     testCompile("org.junit.jupiter:junit-jupiter-params:5.4.1")
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }
 
 model {
@@ -39,6 +41,7 @@ model {
                     cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                     cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
                     cCompiler.args '-D_FILE_OFFSET_BITS=64'
+                    linker.args "-fPIC", "-lnfs"
                 } else if (targetPlatform.operatingSystem.windows) {
                     cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                     cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
@@ -52,10 +55,14 @@ model {
     }
 }
 
-test.dependsOn 'jnfsSharedLibrary'
+task copyJNI(type: Copy) {
+    from file("$buildDir/libs/jnfs/shared/libjnfs.so")
+    into file("${projectDir}/src/main/resources/io/kuun/jnfs/native/Linux/amd64/")
+}
+
+build.dependsOn 'jnfsSharedLibrary', 'copyJNI'
 
 test {
     useJUnitPlatform{}
-    systemProperty "java.library.path", file("${buildDir}/libs/jnfs/shared").absolutePath
 }
 
