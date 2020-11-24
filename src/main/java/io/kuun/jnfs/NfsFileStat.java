@@ -13,10 +13,6 @@ public class NfsFileStat {
         return uid;
     }
 
-    public void setUid(long uid) {
-        this.uid = uid;
-    }
-
     public long getGid() {
         return gid;
     }
@@ -63,6 +59,14 @@ public class NfsFileStat {
 
     public void setCtime(long ctime) {
         this.ctime = ctime;
+    }
+
+    public long getPermissions() {
+        return mode & FileMode.S_PERM_MASK;
+    }
+
+    public long getFileMode() {
+        return mode & FileMode.S_MODE_MASK;
     }
 
     @Override

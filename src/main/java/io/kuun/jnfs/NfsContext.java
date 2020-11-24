@@ -46,6 +46,10 @@ public class NfsContext implements Closeable {
         NativeNfsContext.setUid(contextPtr, uid);
     }
 
+    public void setGid(int gid) {
+        NativeNfsContext.setGid(contextPtr, gid);
+    }
+
 
     public void setPageCache(int v) {
         NativeNfsContext.setPageCache(contextPtr, v);
@@ -84,8 +88,8 @@ public class NfsContext implements Closeable {
      * Set NFS version.
      * @param version Supported versions are 3 (NFS_V3, default) and 4 (NFS_V4)
      */
-    public void setVersion(NfsVersion version) {
-        NativeNfsContext.setVersion(contextPtr, version.getVersion());
+    public void setVersion(int version) {
+        NativeNfsContext.setVersion(contextPtr, version);
     }
 
     void mount(String server, String exportName) throws NfsException {
@@ -205,8 +209,8 @@ public class NfsContext implements Closeable {
 
     private void failThenThrow(int errno) throws NfsException {
         if (errno != 0) {
-            String strerr = NativeNfsContext.strerror(errno);
-            throw new NfsException(errno, strerr);
+            String err = NativeNfsContext.getError(contextPtr);
+            throw new NfsException(errno, err);
         }
     }
 }
