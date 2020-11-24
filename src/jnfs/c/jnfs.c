@@ -562,14 +562,14 @@ Java_io_kuun_jnfs_NativeNfsContext_rename(JNIEnv *env, jclass clazz, jlong conte
     return ret;
 }
 
-JNIEXPORT jstring JNICALL 
-Java_io_kuun_jnfs_NativeNfsContext_strerror(JNIEnv *env, jclass clazz, jint errno) {
-    char *msg = strerror(errno);
-
+JNIEXPORT jstring JNICALL
+Java_io_kuun_jnfs_NativeNfsContext_getError(JNIEnv *env, jclass clazz, jlong contextPtr) {
+    const char *msg = nfs_get_error((struct nfs_context *)contextPtr);
     return (*env)->NewStringUTF(env, msg);
 }
 
-static void convert_nfs_stat64(JNIEnv *env, const struct nfs_stat_64 *stat, jobject fileStat) {
+static void
+convert_nfs_stat64(JNIEnv *env, const struct nfs_stat_64 *stat, jobject fileStat) {
     jclass nfsFileStatClazz;
     jfieldID fieldId;
 

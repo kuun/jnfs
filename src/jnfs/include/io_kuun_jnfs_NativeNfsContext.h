@@ -401,11 +401,11 @@ JNIEXPORT jint JNICALL Java_io_kuun_jnfs_NativeNfsContext_rename
 
 /*
  * Class:     io_kuun_jnfs_NativeNfsContext
- * Method:    strerror
- * Signature: (I)Ljava/lang/String;
+ * Method:    getError
+ * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_io_kuun_jnfs_NativeNfsContext_strerror
-  (JNIEnv *, jclass, jint);
+JNIEXPORT jstring JNICALL Java_io_kuun_jnfs_NativeNfsContext_getError
+  (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus
 }

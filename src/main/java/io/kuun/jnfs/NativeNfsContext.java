@@ -99,5 +99,5 @@ class NativeNfsContext {
 
     static native int rename(long contextPtr, String oldPath, String newPath);
 
-    static native String strerror(int errno);
+    static native String getError(long contextPtr);
 }
