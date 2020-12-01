@@ -46,37 +46,37 @@ public class FileOperationTest {
     void setup() throws NfsInitException, NfsException {
         context = new NfsContext();
         context.init();
-        context.setUid(65534);
-        context.setGid(65534);
+        context.setUid(0);
+        context.setGid(0);
+        // context.setDebug(7);
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(2020, Calendar.JANUARY, 1, 0, 0, 0);
-        testFileModTime =  calendar.getTimeInMillis();
-        log.debug("setup, test: {}", this);
+        testFileModTime =  calendar.getTimeInMillis() / 1000;
     }
 
     @AfterEach
     void cleanup() throws NfsException {
-        //context.unlink(testFileName);
+        context.unlink(testFileName);
         context.umount();
         context.close();
-        log.debug("cleanup, test: {}", this);
     }
 
 
     @ParameterizedTest
-    @ValueSource(ints = {3})
+    @ValueSource(ints = {3, 4})
     void stat(int version) throws NfsException {
         context.setVersion(version);
         context.mount(server, export);
         createTestFile();
         NfsFileStat stat = context.stat(testFileName);
-        log.error("stat: {}", stat);
         assertEquals(testFileMode, stat.getFileMode());
+        assertEquals(testFileModTime, stat.getMtime());
     }
 
     void createTestFile() throws NfsException {
-        context.create(testFileName, testFileMode);
-        context.utime(testFileName, testFileModTime, 0);
+        NfsFile file = context.create(testFileName, OpenFlag.O_CREAT | OpenFlag.O_WRONLY | OpenFlag.O_TRUNC | OpenFlag.O_EXCL, testFileMode);    
+        file.close();
+        context.utime(testFileName, testFileModTime, testFileModTime);
     }
 }
