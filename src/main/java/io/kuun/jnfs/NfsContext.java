@@ -111,6 +111,7 @@ public class NfsContext implements Closeable {
 
     NfsFile open(String path, int flags) throws NfsException {
         NfsFile file = new NfsFile();
+        file.context = this;
         int errno = NativeNfsContext.open(contextPtr, path, flags, file);
         failThenThrow(errno);
         return file;
@@ -118,6 +119,7 @@ public class NfsContext implements Closeable {
 
     NfsFile open(String path, int flags, int mode) throws NfsException {
         NfsFile file = new NfsFile();
+        file.context = this;
         int errno = NativeNfsContext.open2(contextPtr, path, flags, mode, file);
         failThenThrow(errno);
         return file;
@@ -145,6 +147,7 @@ public class NfsContext implements Closeable {
 
     NfsFile create(String path, int mode) throws NfsException {
         NfsFile file = new NfsFile();
+        file.context = this;
         int errno = NativeNfsContext.creat(contextPtr, path, mode, file);
         failThenThrow(errno);
         return file;
@@ -152,6 +155,7 @@ public class NfsContext implements Closeable {
 
     NfsFile create(String path, int flags, int mode) throws NfsException {
         NfsFile file = new NfsFile();
+        file.context = this;
         int errno = NativeNfsContext.create(contextPtr, path, flags, mode, file);
         failThenThrow(errno);
         return file;
@@ -188,8 +192,8 @@ public class NfsContext implements Closeable {
         failThenThrow(errno);
     }
 
-    void utime(String path, long sec, long nsec) throws NfsException {
-        int errno = NativeNfsContext.utime(contextPtr, path, sec, nsec);
+    void utime(String path, long actime, long modtime) throws NfsException {
+        int errno = NativeNfsContext.utime(contextPtr, path, actime, modtime);
         failThenThrow(errno);
     }
 

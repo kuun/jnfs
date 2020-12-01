@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <utime.h>
 #include <nfsc/libnfs.h>
 
 #include "../include/io_kuun_jnfs_NativeNfsContext.h"
@@ -139,7 +140,7 @@ RET:
 }
 
 JNIEXPORT jint JNICALL 
-Java_io_kuun_jnfs_NativeNfsContext_open__JLjava_lang_String_2ILio_kuun_jnfs_NfsFile_2(
+Java_io_kuun_jnfs_NativeNfsContext_open(
         JNIEnv *env, jclass clazz, jlong contextPtr, jstring path, jint flags, jobject file) {
     int ret;
     struct nfsfh *fh = NULL;
@@ -164,7 +165,7 @@ RET:
 }
 
 JNIEXPORT jint JNICALL 
-Java_io_kuun_jnfs_NativeNfsContext_open__JLjava_lang_String_2IILio_kuun_jnfs_NfsFile_2(
+Java_io_kuun_jnfs_NativeNfsContext_open2(
         JNIEnv *env, jclass clazz, jlong contextPtr, jstring path, jint flags, jint mode, jobject file) {
     int ret;
     struct nfsfh *fh = NULL;
@@ -342,11 +343,11 @@ Java_io_kuun_jnfs_NativeNfsContext_creat(JNIEnv *env, jclass clazz, jlong contex
     
     cpath = (*env)->GetStringUTFChars(env, path, NULL);
     ret = nfs_creat((struct nfs_context *)contextPtr, cpath, mode, &fh);
+    // printf("path: %s, mode: %o\n", cpath, mode);
     (*env)->ReleaseStringUTFChars(env, path, cpath);
     if (ret != 0) {
         goto RET;
     }
-
     nfsFileClazz = (*env)->GetObjectClass(env, file);
     fieldId = (*env)->GetFieldID(env, nfsFileClazz, "filePtr", "J");
     (*env)->SetLongField(env, file, fieldId, (jlong)fh);
@@ -366,6 +367,7 @@ Java_io_kuun_jnfs_NativeNfsContext_create(JNIEnv *env, jclass clazz, jlong conte
     
     cpath = (*env)->GetStringUTFChars(env, path, NULL);
     ret = nfs_create((struct nfs_context *)contextPtr, cpath, flags, mode, &fh);
+    // printf("path: %s, flags: %o, mode: %o\n", cpath, flags, mode);
     (*env)->ReleaseStringUTFChars(env, path, cpath);
     if (ret != 0) {
         goto RET;
@@ -533,13 +535,13 @@ Java_io_kuun_jnfs_NativeNfsContext_fchown(JNIEnv *env, jclass clazz, jlong conte
     return nfs_fchown((struct nfs_context *)contextPtr, (struct nfsfh *)filePtr, uid, gid);
 }
 
-JNIEXPORT jint JNICALL Java_io_kuun_jnfs_NativeNfsContext_utime(JNIEnv *env, jclass clazz, jlong contextPtr, jstring path, jlong seconds, jlong useconds) {
+JNIEXPORT jint JNICALL Java_io_kuun_jnfs_NativeNfsContext_utime(JNIEnv *env, jclass clazz, jlong contextPtr, jstring path, jlong actime, jlong modtime) {
     int ret;
-    struct timeval times = {0};
+    struct utimbuf times = {0};
     const char *cpath;
 
-    times.tv_sec = seconds;
-    times.tv_usec = useconds;
+    times.actime = actime;
+    times.modtime = modtime;
     cpath = (*env)->GetStringUTFChars(env, path, NULL);
     ret = nfs_utime((struct nfs_context *)contextPtr, cpath, &times);
     (*env)->ReleaseStringUTFChars(env, path, cpath);
